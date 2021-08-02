@@ -48,7 +48,7 @@ function animation.functions.addAnim(chart, lineId, animType, startTime, endTime
         if animType == 1 or animType == "alpha" then
             -- Check if the whole place is empty
             local tmin = math.max(0, startTime - resetDelay)
-            local tmax = startTime + resetDelay
+            local tmax = endTime + resetDelay
             for j = 1, #l.judgeLineDisappearEvents do
                 if l.judgeLineDisappearEvents[j]['startTime'] >= tmin and l.judgeLineDisappearEvents[j]['startTime'] <= tmax then
                     error("Cannot add animation because other nodes exist") 
@@ -80,9 +80,9 @@ function animation.functions.addAnim(chart, lineId, animType, startTime, endTime
             }
             -- Create node 2
             l.judgeLineDisappearEvents[#l.judgeLineDisappearEvents+1] = {
-                ['startTime']  = startTime,
+                ['startTime']  = endTime,
                 ['endTime']    = 0,
-                ['start']      = startValue,
+                ['start']      = endValue,
                 ['end']        = 0,
                 ['start2']     = 0,
                 ['end2']       = 0,
@@ -119,7 +119,7 @@ function animation.functions.addAnim(chart, lineId, animType, startTime, endTime
             ]]
             -- Check if the whole place is empty
             local tmin = math.max(0, startTime - resetDelay)
-            local tmax = startTime + resetDelay
+            local tmax = endTime + resetDelay
             for j = 1, #l.judgeLineMoveEvents do
                 if l.judgeLineMoveEvents[j]['startTime'] >= tmin and l.judgeLineMoveEvents[j]['startTime'] <= tmax then
                     error("Cannot add animation because other nodes exist") 
@@ -151,7 +151,7 @@ function animation.functions.addAnim(chart, lineId, animType, startTime, endTime
             }
             -- Create node 2
             l.judgeLineMoveEvents[#l.judgeLineMoveEvents+1] = {
-                ['startTime']  = startTime,
+                ['startTime']  = endTime,
                 ['endTime']    = 0,
                 ['start']      = endValue[1],
                 ['end']        = endValue[1],
@@ -177,7 +177,7 @@ function animation.functions.addAnim(chart, lineId, animType, startTime, endTime
         elseif animType == 3 or animType == "rotate" then
             -- Check if the whole place is empty
             local tmin = math.max(0, startTime - resetDelay)
-            local tmax = startTime + resetDelay
+            local tmax = endTime + resetDelay
             for j = 1, #l.judgeLineRotateEvents do
                 if l.judgeLineRotateEvents[j]['startTime'] >= tmin and l.judgeLineRotateEvents[j]['startTime'] <= tmax then
                     error("Cannot add animation because other nodes exist.") 
@@ -209,9 +209,9 @@ function animation.functions.addAnim(chart, lineId, animType, startTime, endTime
             }
             -- Create node 2
             l.judgeLineRotateEvents[#l.judgeLineRotateEvents+1] = {
-                ['startTime']  = startTime,
+                ['startTime']  = endTime,
                 ['endTime']    = 0,
-                ['start']      = startValue,
+                ['start']      = endValue,
                 ['end']        = 0,
                 ['start2']     = 0,
                 ['end2']       = 0,
