@@ -30,6 +30,55 @@ animation.functions.addVanityLine = function(chart, bpm)
     chart.data.judgeLineList[#chart.data.judgeLineList+1] = emptyLine
 end
 
+function animation.functions.addNode(chart, lineId, animType, startTime, startValue, easeType)
+    local l = chart.data.judgeLineList[lineId]
+    if l then
+        if animType == 1 or animType == "alpha" then
+            l.judgeLineDisappearEvents[#l.judgeLineDisappearEvents+1] = {
+                ['startTime']  = startTime,
+                ['endTime']    = 0,
+                ['start']      = startValue,
+                ['end']        = 0,
+                ['start2']     = 0,
+                ['end2']       = 0,
+                ['easeType']   = easeType,
+                ['easeType2']  = 0,
+                ['useEndNode'] = false
+            }
+            table.sort(l.judgeLineDisappearEvents, function(a, b) return a.startTime < b.startTime end)
+        elseif animType == 2 or animType == "move" then
+            l.judgeLineMoveEvents[#l.judgeLineMoveEvents+1] = {
+                ['startTime']  = startTime,
+                ['endTime']    = 0,
+                ['start']      = startValue[1],
+                ['end']        = 0.5,
+                ['start2']     = startValue[2],
+                ['end2']       = 0.5,
+                ['easeType']   = easeType,
+                ['easeType2']  = easeType,
+                ['useEndNode'] = false
+            }
+            table.sort(l.judgeLineMoveEvents, function(a, b) return a.startTime < b.startTime end)
+        elseif animType == 3 or animType == "rotate" then
+            l.judgeLineRotateEvents[#l.judgeLineRotateEvents+1] = {
+                ['startTime']  = startTime,
+                ['endTime']    = 0,
+                ['start']      = startValue,
+                ['end']        = 0,
+                ['start2']     = 0,
+                ['end2']       = 0,
+                ['easeType']   = easeType,
+                ['easeType2']  = 0,
+                ['useEndNode'] = false
+            }
+            table.sort(l.judgeLineRotateEvents, function(a, b) return a.startTime < b.startTime end)
+        end
+    else
+    
+    end
+
+end
+
 function animation.functions.autoMarkVanity(chart)
     for i = 1, #chart.data.judgeLineList do
         local thisLine = chart.data.judgeLineList[i]
