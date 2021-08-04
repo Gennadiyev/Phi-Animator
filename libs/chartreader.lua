@@ -1,4 +1,4 @@
-local json = require("json")
+local json = require("libs.json")
 
 local chartReader = {}
 
@@ -37,6 +37,7 @@ function chartReader:load(filePath)
             local f = io.open(path, "w+")
             f:write(json.encode(chart.data))
             f:close()
+            print("Chart saved at "..path)
         end
         function chart:loadModule(module)
             if module.__kunedit then
@@ -47,6 +48,7 @@ function chartReader:load(filePath)
                 error("Cannot load module")
             end
         end
+        print("Chart loaded")
         return chart
     else
         error("The file does not exist")
