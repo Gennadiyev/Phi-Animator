@@ -51,6 +51,10 @@ chart:save("D:\\Phigros\\MyCharts\\Chart_IN.json")
 
 有关 Animation 插件的使用说明正在编辑中。
 
-## Module
+## 插件 `GlitchFlash`
+
+有关 GlitchFlash 插件的使用说明正在编辑中。
+
+## Developing your own module
 
 请参阅英语版 `readme.md` 中的 Modules 章节。
