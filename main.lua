@@ -1,5 +1,6 @@
-local chartReader = require("chartreader")
-local animation = require("animation")
+local chartReader = require("libs.chartreader")
+local lerp = require("libs.lerp")
+local animation = require("modules.animation")
 
 local chart = chartReader:load("C:\\Users\\asus\\Desktop\\Phigros\\KUN_RETURNS\\projects\\ChartFile\\Chart_HD.json")
 
