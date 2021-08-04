@@ -102,14 +102,14 @@ function Animation.functions.addAnim(chart, lineId, animationType, startTime, en
         local l = chart.data.judgeLineList[lineId]
         if animationType == 1 or animationType == "alpha" then
             -- Check if the whole place is empty
-            local tmin = math.max(0, startTime - resetDelay)
-            local tmax = endTime + resetDelay
+            local tmin = math.max(0, startTime - (resetDelay or 0))
+            local tmax = endTime + (resetDelay or 0)
             for j = 1, #l.judgeLineDisappearEvents do
                 if l.judgeLineDisappearEvents[j]['startTime'] >= tmin and l.judgeLineDisappearEvents[j]['startTime'] <= tmax then
                     error("Cannot add animation because other nodes exist")
                 end
             end
-            if resetDelay > 0 then
+            if resetDelay and resetDelay > 0 then
                 if not(resetSwitch) then resetSwitch = {1, 1} end
                 -- Create invisible node to make the line invisible before
                 if resetSwitch[1] then
@@ -167,14 +167,14 @@ function Animation.functions.addAnim(chart, lineId, animationType, startTime, en
             table.sort(l.judgeLineDisappearEvents, function(a, b) return a.startTime < b.startTime end)
         elseif animationType == 2 or animationType == "move" then
             -- Check if the whole place is empty
-            local tmin = math.max(0, startTime - resetDelay)
-            local tmax = endTime + resetDelay
+            local tmin = math.max(0, startTime - (resetDelay or 0))
+            local tmax = endTime + (resetDelay or 0)
             for j = 1, #l.judgeLineMoveEvents do
                 if l.judgeLineMoveEvents[j]['startTime'] >= tmin and l.judgeLineMoveEvents[j]['startTime'] <= tmax then
                     error("Cannot add animation because other nodes exist")
                 end
             end
-            if resetDelay > 0 then
+            if resetDelay and resetDelay > 0 then
                 if not(resetSwitch) then resetSwitch = {1, 1} end
                 -- Create invisible node to make the line invisible before
                 if resetSwitch[1] then
@@ -232,14 +232,14 @@ function Animation.functions.addAnim(chart, lineId, animationType, startTime, en
             table.sort(l.judgeLineMoveEvents, function(a, b) return a.startTime < b.startTime end)
         elseif animationType == 3 or animationType == "rotate" then
             -- Check if the whole place is empty
-            local tmin = math.max(0, startTime - resetDelay)
-            local tmax = endTime + resetDelay
+            local tmin = math.max(0, startTime - (resetDelay or 0))
+            local tmax = endTime + (resetDelay or 0)
             for j = 1, #l.judgeLineRotateEvents do
                 if l.judgeLineRotateEvents[j]['startTime'] >= tmin and l.judgeLineRotateEvents[j]['startTime'] <= tmax then
                     error("Cannot add animation because other nodes exist")
                 end
             end
-            if resetDelay > 0 then
+            if resetDelay and resetDelay > 0 then
                 if not(resetSwitch) then resetSwitch = {1, 1} end
                 -- Create invisible node to make the line invisible before
                 if resetSwitch[1] then
