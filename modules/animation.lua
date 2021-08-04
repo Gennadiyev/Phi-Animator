@@ -1,15 +1,15 @@
-local json = require("json")
+local json = require("libs.json")
 
-local animation = {
+local Animation = {
     __kunedit = {
         version = 1,
         author = "Kunologist",
-        description = "Basic animation utilities"
+        description = "Basic animation utilities."
     },
     functions = {}
 }
 
-animation.functions.addVanityLine = function(chart, bpm)
+Animation.functions.addVanityLine = function(chart, bpm)
     assert(type(bpm) == "number", "Argument 'bpm' must be a number")
     local emptyLine = json.decode([[
         {
@@ -30,10 +30,10 @@ animation.functions.addVanityLine = function(chart, bpm)
     chart.data.judgeLineList[#chart.data.judgeLineList+1] = emptyLine
 end
 
-function animation.functions.addNode(chart, lineId, animType, startTime, startValue, easeType)
+function Animation.functions.addNode(chart, lineId, animationType, startTime, startValue, easeType)
     local l = chart.data.judgeLineList[lineId]
     if l then
-        if animType == 1 or animType == "alpha" then
+        if animationType == 1 or animationType == "alpha" then
             l.judgeLineDisappearEvents[#l.judgeLineDisappearEvents+1] = {
                 ['startTime']  = startTime,
                 ['endTime']    = 0,
@@ -46,7 +46,7 @@ function animation.functions.addNode(chart, lineId, animType, startTime, startVa
                 ['useEndNode'] = false
             }
             table.sort(l.judgeLineDisappearEvents, function(a, b) return a.startTime < b.startTime end)
-        elseif animType == 2 or animType == "move" then
+        elseif animationType == 2 or animationType == "move" then
             l.judgeLineMoveEvents[#l.judgeLineMoveEvents+1] = {
                 ['startTime']  = startTime,
                 ['endTime']    = 0,
@@ -59,7 +59,7 @@ function animation.functions.addNode(chart, lineId, animType, startTime, startVa
                 ['useEndNode'] = false
             }
             table.sort(l.judgeLineMoveEvents, function(a, b) return a.startTime < b.startTime end)
-        elseif animType == 3 or animType == "rotate" then
+        elseif animationType == 3 or animationType == "rotate" then
             l.judgeLineRotateEvents[#l.judgeLineRotateEvents+1] = {
                 ['startTime']  = startTime,
                 ['endTime']    = 0,
@@ -79,7 +79,7 @@ function animation.functions.addNode(chart, lineId, animType, startTime, startVa
 
 end
 
-function animation.functions.autoMarkVanity(chart)
+function Animation.functions.autoMarkVanity(chart)
     for i = 1, #chart.data.judgeLineList do
         local thisLine = chart.data.judgeLineList[i]
         if thisLine.numOfNotes == 0 and #thisLine.speedEvents == 0
@@ -91,10 +91,10 @@ function animation.functions.autoMarkVanity(chart)
     end
 end
 
-function animation.functions.addAnim(chart, lineId, animType, startTime, endTime, startValue, endValue, easeType, resetDelay)
+function Animation.functions.addAnim(chart, lineId, animationType, startTime, endTime, startValue, endValue, easeType, resetDelay)
     if chart.data.judgeLineList[lineId] and chart.data.judgeLineList[lineId].vanity then
         local l = chart.data.judgeLineList[lineId]
-        if animType == 1 or animType == "alpha" then
+        if animationType == 1 or animationType == "alpha" then
             -- Check if the whole place is empty
             local tmin = math.max(0, startTime - resetDelay)
             local tmax = endTime + resetDelay
@@ -103,18 +103,32 @@ function animation.functions.addAnim(chart, lineId, animType, startTime, endTime
                     error("Cannot add animation because other nodes exist") 
                 end
             end
-            -- Create invisible node to make the line invisible before
-            l.judgeLineDisappearEvents[#l.judgeLineDisappearEvents+1] = {
-                ['startTime']  = tmin,
-                ['endTime']    = 0,
-                ['start']      = 0,
-                ['end']        = 0,
-                ['start2']     = 0,
-                ['end2']       = 0,
-                ['easeType']   = 13,
-                ['easeType2']  = 0,
-                ['useEndNode'] = false
-            }
+            if resetDelay then
+                -- Create invisible node to make the line invisible before
+                l.judgeLineDisappearEvents[#l.judgeLineDisappearEvents+1] = {
+                    ['startTime']  = tmin,
+                    ['endTime']    = 0,
+                    ['start']      = 0,
+                    ['end']        = 0,
+                    ['start2']     = 0,
+                    ['end2']       = 0,
+                    ['easeType']   = 13,
+                    ['easeType2']  = 0,
+                    ['useEndNode'] = false
+                }
+                -- Hide the line once again after resetDelay
+                l.judgeLineDisappearEvents[#l.judgeLineDisappearEvents+1] = {
+                    ['startTime']  = tmax,
+                    ['endTime']    = 0,
+                    ['start']      = 0,
+                    ['end']        = 0,
+                    ['start2']     = 0,
+                    ['end2']       = 0,
+                    ['easeType']   = 13,
+                    ['easeType2']  = 0,
+                    ['useEndNode'] = false
+                }
+            end
             -- Create node 1
             l.judgeLineDisappearEvents[#l.judgeLineDisappearEvents+1] = {
                 ['startTime']  = startTime,
@@ -135,37 +149,12 @@ function animation.functions.addAnim(chart, lineId, animType, startTime, endTime
                 ['end']        = 0,
                 ['start2']     = 0,
                 ['end2']       = 0,
-                ['easeType']   = 14,
-                ['easeType2']  = 0,
-                ['useEndNode'] = false
-            }
-            -- Hide the line once again after resetDelay
-            l.judgeLineDisappearEvents[#l.judgeLineDisappearEvents+1] = {
-                ['startTime']  = tmax,
-                ['endTime']    = 0,
-                ['start']      = 0,
-                ['end']        = 0,
-                ['start2']     = 0,
-                ['end2']       = 0,
                 ['easeType']   = 13,
                 ['easeType2']  = 0,
                 ['useEndNode'] = false
             }
             table.sort(l.judgeLineDisappearEvents, function(a, b) return a.startTime < b.startTime end)
-        elseif animType == 2 or animType == "move" then
-            --[[
-                {
-                    "startTime": 0.0,
-                    "endTime": 0.0,
-                    "start": 0.5,
-                    "end": 0.5,
-                    "start2": 0.5999999642372131,
-                    "end2": 0.5999999642372131,
-                    "easeType": 4,
-                    "easeType2": 4,
-                    "useEndNode": false
-                },
-            ]]
+        elseif animationType == 2 or animationType == "move" then
             -- Check if the whole place is empty
             local tmin = math.max(0, startTime - resetDelay)
             local tmax = endTime + resetDelay
@@ -174,18 +163,32 @@ function animation.functions.addAnim(chart, lineId, animType, startTime, endTime
                     error("Cannot add animation because other nodes exist") 
                 end
             end
-            -- Create invisible node to make the line invisible before
-            l.judgeLineMoveEvents[#l.judgeLineMoveEvents+1] = {
-                ['startTime']  = tmin,
-                ['endTime']    = 0,
-                ['start']      = 0.5,
-                ['end']        = 0.5,
-                ['start2']     = 0.5,
-                ['end2']       = 0.5,
-                ['easeType']   = 13,
-                ['easeType2']  = 13,
-                ['useEndNode'] = false
-            }
+            if resetDelay then
+                -- Create invisible node to make the line invisible before
+                l.judgeLineDisappearEvents[#l.judgeLineDisappearEvents+1] = {
+                    ['startTime']  = tmin,
+                    ['endTime']    = 0,
+                    ['start']      = 0,
+                    ['end']        = 0,
+                    ['start2']     = 0,
+                    ['end2']       = 0,
+                    ['easeType']   = 13,
+                    ['easeType2']  = 0,
+                    ['useEndNode'] = false
+                }
+                -- Hide the line once again after resetDelay
+                l.judgeLineDisappearEvents[#l.judgeLineDisappearEvents+1] = {
+                    ['startTime']  = tmax,
+                    ['endTime']    = 0,
+                    ['start']      = 0,
+                    ['end']        = 0,
+                    ['start2']     = 0,
+                    ['end2']       = 0,
+                    ['easeType']   = 13,
+                    ['easeType2']  = 0,
+                    ['useEndNode'] = false
+                }
+            end
             -- Create node 1
             l.judgeLineMoveEvents[#l.judgeLineMoveEvents+1] = {
                 ['startTime']  = startTime,
@@ -206,44 +209,46 @@ function animation.functions.addAnim(chart, lineId, animType, startTime, endTime
                 ['end']        = endValue[1],
                 ['start2']     = endValue[2],
                 ['end2']       = endValue[2],
-                ['easeType']   = 14,
-                ['easeType2']  = 14,
-                ['useEndNode'] = false
-            }
-            -- Hide the line once again after resetDelay
-            l.judgeLineMoveEvents[#l.judgeLineMoveEvents+1] = {
-                ['startTime']  = tmax,
-                ['endTime']    = 0,
-                ['start']      = 0.5,
-                ['end']        = 0.5,
-                ['start2']     = 0.5,
-                ['end2']       = 0.5,
                 ['easeType']   = 13,
                 ['easeType2']  = 13,
                 ['useEndNode'] = false
             }
             table.sort(l.judgeLineMoveEvents, function(a, b) return a.startTime < b.startTime end)
-        elseif animType == 3 or animType == "rotate" then
+        elseif animationType == 3 or animationType == "rotate" then
             -- Check if the whole place is empty
             local tmin = math.max(0, startTime - resetDelay)
             local tmax = endTime + resetDelay
             for j = 1, #l.judgeLineRotateEvents do
                 if l.judgeLineRotateEvents[j]['startTime'] >= tmin and l.judgeLineRotateEvents[j]['startTime'] <= tmax then
-                    error("Cannot add animation because other nodes exist.") 
+                    error("Cannot add animation because other nodes exist") 
                 end
             end
-            -- Create invisible node to make the line invisible before
-            l.judgeLineRotateEvents[#l.judgeLineRotateEvents+1] = {
-                ['startTime']  = tmin,
-                ['endTime']    = 0,
-                ['start']      = 0,
-                ['end']        = 0,
-                ['start2']     = 0,
-                ['end2']       = 0,
-                ['easeType']   = 13,
-                ['easeType2']  = 0,
-                ['useEndNode'] = false
-            }
+            if resetDelay then
+                -- Create invisible node to make the line invisible before
+                l.judgeLineDisappearEvents[#l.judgeLineDisappearEvents+1] = {
+                    ['startTime']  = tmin,
+                    ['endTime']    = 0,
+                    ['start']      = 0,
+                    ['end']        = 0,
+                    ['start2']     = 0,
+                    ['end2']       = 0,
+                    ['easeType']   = 13,
+                    ['easeType2']  = 0,
+                    ['useEndNode'] = false
+                }
+                -- Hide the line once again after resetDelay
+                l.judgeLineDisappearEvents[#l.judgeLineDisappearEvents+1] = {
+                    ['startTime']  = tmax,
+                    ['endTime']    = 0,
+                    ['start']      = 0,
+                    ['end']        = 0,
+                    ['start2']     = 0,
+                    ['end2']       = 0,
+                    ['easeType']   = 13,
+                    ['easeType2']  = 0,
+                    ['useEndNode'] = false
+                }
+            end
             -- Create node 1
             l.judgeLineRotateEvents[#l.judgeLineRotateEvents+1] = {
                 ['startTime']  = startTime,
@@ -264,57 +269,75 @@ function animation.functions.addAnim(chart, lineId, animType, startTime, endTime
                 ['end']        = 0,
                 ['start2']     = 0,
                 ['end2']       = 0,
-                ['easeType']   = 14,
-                ['easeType2']  = 0,
-                ['useEndNode'] = false
-            }
-            -- Hide the line once again after resetDelay
-            l.judgeLineRotateEvents[#l.judgeLineRotateEvents+1] = {
-                ['startTime']  = tmax,
-                ['endTime']    = 0,
-                ['start']      = 0,
-                ['end']        = 0,
-                ['start2']     = 0,
-                ['end2']       = 0,
                 ['easeType']   = 13,
                 ['easeType2']  = 0,
                 ['useEndNode'] = false
             }
             table.sort(l.judgeLineRotateEvents, function(a, b) return a.startTime < b.startTime end)
         else
-            error("Argument 'animType' not understood")
+            error("Argument 'animationType' must be either 1, 2, 3, 'alpha', 'move' or 'rotate'")
         end
     else
         error("The line does not exist, or is not a vanity line")
     end
 end
 
-function animation.functions.autoAddAnim(chart, animType, startTime, endTime, startValue, endValue, easeType, resetDelay)
+function Animation.functions.autoAddAnim(chart, animationType, startTime, endTime, startValue, endValue, easeType, resetDelay)
     for i = 1, #chart.data.judgeLineList do
         if chart.data.judgeLineList[i]['vanity'] then
             local isSuccess = pcall(function()
-                animation.functions.addAnim(chart, i, animType, startTime, endTime, startValue, endValue, easeType, resetDelay)
+                Animation.functions.addAnim(chart, i, animationType, startTime, endTime, startValue, endValue, easeType, resetDelay)
             end)
             if isSuccess then
-                print("Succeeded")
+                print("Animation added on line "..i)
                 return
             else
-                print(string.format("Attempted to add animation on line %d but failed. Retrying...", i))
+                -- print(string.format("Attempted to add animation on line %d but failed. Retrying...", i))
             end
         end
     end
     print(string.format("All attempts failed, creating new vanity line"))
-    animation.functions.addVanityLine(chart, chart.data.judgeLineList[1]['bpm'])
+    Animation.functions.addVanityLine(chart, chart.data.judgeLineList[1]['bpm'])
     local isSuccess = pcall(function()
-        animation.functions.addAnim(chart, #chart.data.judgeLineList, animType, startTime, endTime, startValue, endValue, easeType, resetDelay)
+        Animation.functions.addAnim(chart, #chart.data.judgeLineList, animationType, startTime, endTime, startValue, endValue, easeType, resetDelay)
     end)
     if isSuccess then
-        print("Succeeded")
+        print("Animation added on a new line")
         return
     else
-        error("Failed")
+        error("Failed to add animation, please check your syntax")
     end
 
 end
 
-return animation
+function Animation.functions.nodeExist(chart, lineId, animationType, startTime, endTime)
+    local l = chart.data.judgeLineList[lineId]
+    if l then
+        if animationType == 1 or animationType == "alpha" then
+            for j = 1, #l.judgeLineDisappearEvents do
+                if l.judgeLineDisappearEvents[j]['startTime'] >= startTime and l.judgeLineDisappearEvents[j]['startTime'] <= endTime then
+                    return true
+                end
+            end
+            return false
+        elseif animationType == 2 or animationType == "move" then
+            for j = 1, #l.judgeLineMoveEvents do
+                if l.judgeLineMoveEvents[j]['startTime'] >= startTime and l.judgeLineMoveEvents[j]['startTime'] <= endTime then
+                    return true
+                end
+            end
+            return false
+        elseif animationType == 3 or animationType == "rotate" then
+            for j = 1, #l.judgeLineRotateEvents do
+                if l.judgeLineRotateEvents[j]['startTime'] >= startTime and l.judgeLineRotateEvents[j]['startTime'] <= endTime then
+                    return true
+                end
+            end
+            return false
+        end
+    else
+        error("The line does not exist")
+    end
+end
+
+return Animation
