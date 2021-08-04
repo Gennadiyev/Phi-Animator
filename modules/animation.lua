@@ -97,7 +97,7 @@ function Animation.functions.isVanityLine(chart, lineId)
     end
 end
 
-function Animation.functions.addAnim(chart, lineId, animationType, startTime, endTime, startValue, endValue, easeType, resetDelay)
+function Animation.functions.addAnim(chart, lineId, animationType, startTime, endTime, startValue, endValue, easeType, resetDelay, resetSwitch)
     if chart.data.judgeLineList[lineId] and chart.data.judgeLineList[lineId].vanity then
         local l = chart.data.judgeLineList[lineId]
         if animationType == 1 or animationType == "alpha" then
@@ -106,34 +106,39 @@ function Animation.functions.addAnim(chart, lineId, animationType, startTime, en
             local tmax = endTime + resetDelay
             for j = 1, #l.judgeLineDisappearEvents do
                 if l.judgeLineDisappearEvents[j]['startTime'] >= tmin and l.judgeLineDisappearEvents[j]['startTime'] <= tmax then
-                    error("Cannot add animation because other nodes exist") 
+                    error("Cannot add animation because other nodes exist")
                 end
             end
-            if resetDelay then
+            if resetDelay > 0 then
+                if not(resetSwitch) then resetSwitch = {1, 1} end
                 -- Create invisible node to make the line invisible before
-                l.judgeLineDisappearEvents[#l.judgeLineDisappearEvents+1] = {
-                    ['startTime']  = tmin,
-                    ['endTime']    = 0,
-                    ['start']      = 0,
-                    ['end']        = 0,
-                    ['start2']     = 0,
-                    ['end2']       = 0,
-                    ['easeType']   = 13,
-                    ['easeType2']  = 0,
-                    ['useEndNode'] = false
-                }
-                -- Hide the line once again after resetDelay
-                l.judgeLineDisappearEvents[#l.judgeLineDisappearEvents+1] = {
-                    ['startTime']  = tmax,
-                    ['endTime']    = 0,
-                    ['start']      = 0,
-                    ['end']        = 0,
-                    ['start2']     = 0,
-                    ['end2']       = 0,
-                    ['easeType']   = 13,
-                    ['easeType2']  = 0,
-                    ['useEndNode'] = false
-                }
+                if resetSwitch[1] then
+                    l.judgeLineDisappearEvents[#l.judgeLineDisappearEvents+1] = {
+                        ['startTime']  = tmin,
+                        ['endTime']    = 0,
+                        ['start']      = 0,
+                        ['end']        = 0,
+                        ['start2']     = 0,
+                        ['end2']       = 0,
+                        ['easeType']   = 13,
+                        ['easeType2']  = 0,
+                        ['useEndNode'] = false
+                    }
+                end
+                if resetSwitch[2] then
+                    -- Hide the line once again after resetDelay
+                    l.judgeLineDisappearEvents[#l.judgeLineDisappearEvents+1] = {
+                        ['startTime']  = tmax,
+                        ['endTime']    = 0,
+                        ['start']      = 0,
+                        ['end']        = 0,
+                        ['start2']     = 0,
+                        ['end2']       = 0,
+                        ['easeType']   = 13,
+                        ['easeType2']  = 0,
+                        ['useEndNode'] = false
+                    }
+                end
             end
             -- Create node 1
             l.judgeLineDisappearEvents[#l.judgeLineDisappearEvents+1] = {
@@ -166,34 +171,39 @@ function Animation.functions.addAnim(chart, lineId, animationType, startTime, en
             local tmax = endTime + resetDelay
             for j = 1, #l.judgeLineMoveEvents do
                 if l.judgeLineMoveEvents[j]['startTime'] >= tmin and l.judgeLineMoveEvents[j]['startTime'] <= tmax then
-                    error("Cannot add animation because other nodes exist") 
+                    error("Cannot add animation because other nodes exist")
                 end
             end
-            if resetDelay then
+            if resetDelay > 0 then
+                if not(resetSwitch) then resetSwitch = {1, 1} end
                 -- Create invisible node to make the line invisible before
-                l.judgeLineDisappearEvents[#l.judgeLineDisappearEvents+1] = {
-                    ['startTime']  = tmin,
-                    ['endTime']    = 0,
-                    ['start']      = 0,
-                    ['end']        = 0,
-                    ['start2']     = 0,
-                    ['end2']       = 0,
-                    ['easeType']   = 13,
-                    ['easeType2']  = 0,
-                    ['useEndNode'] = false
-                }
-                -- Hide the line once again after resetDelay
-                l.judgeLineDisappearEvents[#l.judgeLineDisappearEvents+1] = {
-                    ['startTime']  = tmax,
-                    ['endTime']    = 0,
-                    ['start']      = 0,
-                    ['end']        = 0,
-                    ['start2']     = 0,
-                    ['end2']       = 0,
-                    ['easeType']   = 13,
-                    ['easeType2']  = 0,
-                    ['useEndNode'] = false
-                }
+                if resetSwitch[1] then
+                    l.judgeLineDisappearEvents[#l.judgeLineDisappearEvents+1] = {
+                        ['startTime']  = tmin,
+                        ['endTime']    = 0,
+                        ['start']      = 0,
+                        ['end']        = 0,
+                        ['start2']     = 0,
+                        ['end2']       = 0,
+                        ['easeType']   = 13,
+                        ['easeType2']  = 0,
+                        ['useEndNode'] = false
+                    }
+                end
+                if resetSwitch[2] then
+                    -- Hide the line once again after resetDelay
+                    l.judgeLineDisappearEvents[#l.judgeLineDisappearEvents+1] = {
+                        ['startTime']  = tmax,
+                        ['endTime']    = 0,
+                        ['start']      = 0,
+                        ['end']        = 0,
+                        ['start2']     = 0,
+                        ['end2']       = 0,
+                        ['easeType']   = 13,
+                        ['easeType2']  = 0,
+                        ['useEndNode'] = false
+                    }
+                end
             end
             -- Create node 1
             l.judgeLineMoveEvents[#l.judgeLineMoveEvents+1] = {
@@ -226,34 +236,39 @@ function Animation.functions.addAnim(chart, lineId, animationType, startTime, en
             local tmax = endTime + resetDelay
             for j = 1, #l.judgeLineRotateEvents do
                 if l.judgeLineRotateEvents[j]['startTime'] >= tmin and l.judgeLineRotateEvents[j]['startTime'] <= tmax then
-                    error("Cannot add animation because other nodes exist") 
+                    error("Cannot add animation because other nodes exist")
                 end
             end
-            if resetDelay then
+            if resetDelay > 0 then
+                if not(resetSwitch) then resetSwitch = {1, 1} end
                 -- Create invisible node to make the line invisible before
-                l.judgeLineDisappearEvents[#l.judgeLineDisappearEvents+1] = {
-                    ['startTime']  = tmin,
-                    ['endTime']    = 0,
-                    ['start']      = 0,
-                    ['end']        = 0,
-                    ['start2']     = 0,
-                    ['end2']       = 0,
-                    ['easeType']   = 13,
-                    ['easeType2']  = 0,
-                    ['useEndNode'] = false
-                }
-                -- Hide the line once again after resetDelay
-                l.judgeLineDisappearEvents[#l.judgeLineDisappearEvents+1] = {
-                    ['startTime']  = tmax,
-                    ['endTime']    = 0,
-                    ['start']      = 0,
-                    ['end']        = 0,
-                    ['start2']     = 0,
-                    ['end2']       = 0,
-                    ['easeType']   = 13,
-                    ['easeType2']  = 0,
-                    ['useEndNode'] = false
-                }
+                if resetSwitch[1] then
+                    l.judgeLineDisappearEvents[#l.judgeLineDisappearEvents+1] = {
+                        ['startTime']  = tmin,
+                        ['endTime']    = 0,
+                        ['start']      = 0,
+                        ['end']        = 0,
+                        ['start2']     = 0,
+                        ['end2']       = 0,
+                        ['easeType']   = 13,
+                        ['easeType2']  = 0,
+                        ['useEndNode'] = false
+                    }
+                end
+                if resetSwitch[2] then
+                    -- Hide the line once again after resetDelay
+                    l.judgeLineDisappearEvents[#l.judgeLineDisappearEvents+1] = {
+                        ['startTime']  = tmax,
+                        ['endTime']    = 0,
+                        ['start']      = 0,
+                        ['end']        = 0,
+                        ['start2']     = 0,
+                        ['end2']       = 0,
+                        ['easeType']   = 13,
+                        ['easeType2']  = 0,
+                        ['useEndNode'] = false
+                    }
+                end
             end
             -- Create node 1
             l.judgeLineRotateEvents[#l.judgeLineRotateEvents+1] = {
