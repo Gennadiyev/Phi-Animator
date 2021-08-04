@@ -82,12 +82,18 @@ end
 function Animation.functions.autoMarkVanity(chart)
     for i = 1, #chart.data.judgeLineList do
         local thisLine = chart.data.judgeLineList[i]
-        if thisLine.numOfNotes == 0 and #thisLine.speedEvents == 0
-          and #thisLine.judgeLineMoveEvents == 0 and #thisLine.judgeLineDisappearEvents == 0
-          and #thisLine.judgeLineRotateEvents == 0 then
+        if thisLine.numOfNotes == 0 then
             thisLine.vanity = true
             print("Marked line ".. i .. " as vanity line")
         end
+    end
+end
+
+function Animation.functions.isVanityLine(chart, lineId)
+    if chart.data.judgeLineList[lineId] and #chart.data.judgeLineList[lineId].numOfNotes == 0 then
+        return true
+    else
+        return false
     end
 end
 
