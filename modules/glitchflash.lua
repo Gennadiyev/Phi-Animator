@@ -10,14 +10,14 @@ local GlitchFlash = {
     functions = {}
 }
 
-GlitchFlash.functions.toggleFlash = function(chart, lineId, startTime, endTime, period, alphaOn, alphaOff, isFirstNodeOn)
+GlitchFlash.functions.flashToggle = function(chart, lineId, startTime, endTime, period, alphaOn, alphaOff, isFirstNodeOn)
     local isLineExist, hasNode = pcall(function()
         return animation.functions.nodeExist(chart, lineId, 1, startTime, endTime)
     end)
     if not(isLineExist) then
         error("The line does not exist")
     end
-    if not(hasNode) then
+    if hasNode then
         error("Cannot add animation because other nodes exist")
     end
     local currentTime = startTime
@@ -54,14 +54,14 @@ GlitchFlash.functions.toggleFlash = function(chart, lineId, startTime, endTime, 
     end
 end
 
-GlitchFlash.functions.randomFlash = function(chart, lineId, startTime, endTime, period, chanceOn, alphaOn, alphaOff)
+GlitchFlash.functions.flashRandom = function(chart, lineId, startTime, endTime, period, chanceOn, alphaOn, alphaOff)
     local isLineExist, hasNode = pcall(function()
         return animation.functions.nodeExist(chart, lineId, 1, startTime, endTime)
     end)
     if not(isLineExist) then
         error("The line does not exist")
     end
-    if not(hasNode) then
+    if hasNode then
         error("Cannot add animation because other nodes exist")
     end
     assert(type(period) == "number" and period > 0 and math.floor(period) == period, "Argument 'period' must be a positive number")
@@ -80,3 +80,5 @@ GlitchFlash.functions.randomFlash = function(chart, lineId, startTime, endTime, 
         end
     end
 end
+
+return GlitchFlash
