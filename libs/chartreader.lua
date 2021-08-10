@@ -6,9 +6,13 @@ function chartReader:load(filePath)
     local f = io.open(filePath, "r")
     if f then
         local c = f:read("*a")
-        c = json.decode(c)
+        local isSuccessful, c = pcall(function() return json.decode(c) end)
+        assert(isSuccessful, "The chart is not a valid json file")
         local chart = {}
         chart.data = c
+        if c.formatVersion ~= 2 then
+            print("Be careful, you are loading an unsupported chart format: "..c.formatVersion)
+        end
         chart.path = filePath
         chart.utils = {}
         setmetatable(chart, {

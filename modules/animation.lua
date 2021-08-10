@@ -330,6 +330,42 @@ function Animation.functions.addAnim(chart, lineId, animationType, startTime, en
     end
 end
 
+function Animation.functions.removeNodes(chart, lineId, startTime, endTime, animationType)
+    local l = chart.data.judgeLineList[lineId]
+    assert(l, "The line does not exist")
+    if animationType == 1 or animationType == "alpha" then
+        local count = 0
+        for i = #l.judgeLineDisappearEvents, 1, -1 do
+            local nodeTime = l.judgeLineDisappearEvents[i]['startTime']
+            if nodeTime >= startTime and nodeTime <= endTime then
+                table.remove(l.judgeLineDisappearEvents, i)
+                count = count + 1
+            end
+        end
+        print("Removed "..count.." animations")
+    elseif animationType == 2 or animationType == "move" then
+        local count = 0
+        for i = #l.judgeLineMoveEvents, 1, -1 do
+            local nodeTime = l.judgeLineMoveEvents[i]['startTime']
+            if nodeTime >= startTime and nodeTime <= endTime then
+                table.remove(l.judgeLineMoveEvents, i)
+                count = count + 1
+            end
+        end
+        print("Removed "..count.." animations")
+    elseif animationType == 3 or animationType == "rotate" then
+        local count = 0
+        for i = #l.judgeLineRotateEvents, 1, -1 do
+            local nodeTime = l.judgeLineRotateEvents[i]['startTime']
+            if nodeTime >= startTime and nodeTime <= endTime then
+                table.remove(l.judgeLineRotateEvents, i)
+                count = count + 1
+            end
+        end
+        print("Removed "..count.." animations")
+    end
+end
+
 -- Documented
 function Animation.functions.autoAddAnim(chart, animationType, startTime, endTime, startValue, endValue, easeType, resetDelay, resetSwitch)
     for i = 1, #chart.data.judgeLineList do
@@ -359,6 +395,7 @@ function Animation.functions.autoAddAnim(chart, animationType, startTime, endTim
 
 end
 
+-- Documented
 function Animation.functions.nodeExist(chart, lineId, animationType, startTime, endTime)
     local l = chart.data.judgeLineList[lineId]
     if l then

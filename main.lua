@@ -10,7 +10,23 @@ chart:loadModule(glitch)
 chart:loadModule(animation)
 print(chart)
 
-chart:flashOnce()
+chart:autoMarkVanity()
+
+for i = 16, 23 do
+    chart:removeNodes(i, 5376, 5376+64, "alpha")
+    chart:addAnim(i, "alpha", 5376, 5376 + 15, 0, 0, 1)
+    chart:addAnim(i, "alpha", 5376 + 16, 5376 + 31, 0, 0, 1)
+    chart:addAnim(i, "alpha", 5376 + 32, 5376 + 47, 0, 0, 1)
+    chart:addAnim(i, "alpha", 5376 + 48, 5376 + 63, 0, 0, 1)
+
+    chart:removeNodes(i, 2304, 2432, "alpha")
+    chart:addAnim(i, "alpha", 2304, 2432, 0, 0, 13)
+
+    chart:removeNodes(i, 1824, 1856, "alpha")
+    chart:flashOnce(i, 1824, 1824+8, 1, 0, 3)
+    chart:flashOnce(i, 1840, 1840+7, 1, 0, 3)
+    chart:flashOnce(i, 1848, 1848+8, 1, 0, 3)
+end
 
 -- local t = 1312
 -- local action = 9
