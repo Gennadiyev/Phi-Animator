@@ -2,6 +2,24 @@ local function pow(a, b)
     return a ^ b
 end
 
+local easingDictionary = {
+	linear = 0,
+	inSine = 1,
+	outSine = 2,
+	inOutSine = 3,
+	inCubic = 4,
+	outCubic = 5,
+	inOutCubic = 6,
+	inQuint = 7,
+	outQuint = 8,
+	inOutQuint = 9,
+	inCirc = 10,
+	outCirc = 11,
+	inOutCirc = 12,
+	zero = 13,
+	one = 14
+}
+
 local function lerp(time1, time2, currentTime, param1, param2, easeType)
 	local t = currentTime - time1
 	local b = param1
@@ -64,4 +82,4 @@ local function lerp(time1, time2, currentTime, param1, param2, easeType)
 	end
 end
 
-return lerp
+return easingDictionary, lerp

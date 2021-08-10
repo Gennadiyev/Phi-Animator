@@ -81,4 +81,17 @@ GlitchFlash.functions.flashRandom = function(chart, lineId, startTime, endTime, 
     end
 end
 
+function GlitchFlash.functions.flashOnce(chart, lineId, startTime, endTime, alphaOn, alphaOff, easeType, resetDelay, resetSwitch)
+    local isLineExist, hasNode = pcall(function()
+        return animation.functions.nodeExist(chart, lineId, 1, startTime, endTime)
+    end)
+    if not(isLineExist) then
+        error("The line does not exist")
+    end
+    if hasNode then
+        error("Cannot add animation because other nodes exist")
+    end
+    animation.functions.addAnim(chart, lineId, 1, startTime, endTime, alphaOn, alphaOff, easeType, resetDelay, resetSwitch)
+end
+
 return GlitchFlash

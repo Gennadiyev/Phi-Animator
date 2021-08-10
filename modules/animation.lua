@@ -1,4 +1,5 @@
 local json = require("libs.json")
+local easing = require("libs.lerp")
 
 local Animation = {
     __kunedit = {
@@ -9,6 +10,7 @@ local Animation = {
     functions = {}
 }
 
+-- Documented
 Animation.functions.addVanityLine = function(chart, bpm)
     assert(type(bpm) == "number", "Argument 'bpm' must be a number")
     local emptyLine = json.decode([[
@@ -30,55 +32,72 @@ Animation.functions.addVanityLine = function(chart, bpm)
     chart.data.judgeLineList[#chart.data.judgeLineList+1] = emptyLine
 end
 
+-- Documented
 function Animation.functions.addNode(chart, lineId, animationType, startTime, startValue, easeType)
-    local l = chart.data.judgeLineList[lineId]
-    if l then
-        if animationType == 1 or animationType == "alpha" then
-            l.judgeLineDisappearEvents[#l.judgeLineDisappearEvents+1] = {
-                ['startTime']  = startTime,
-                ['endTime']    = 0,
-                ['start']      = startValue,
-                ['end']        = 0,
-                ['start2']     = 0,
-                ['end2']       = 0,
-                ['easeType']   = easeType,
-                ['easeType2']  = 0,
-                ['useEndNode'] = false
-            }
-            table.sort(l.judgeLineDisappearEvents, function(a, b) return a.startTime < b.startTime end)
-        elseif animationType == 2 or animationType == "move" then
-            l.judgeLineMoveEvents[#l.judgeLineMoveEvents+1] = {
-                ['startTime']  = startTime,
-                ['endTime']    = 0,
-                ['start']      = startValue[1],
-                ['end']        = 0.5,
-                ['start2']     = startValue[2],
-                ['end2']       = 0.5,
-                ['easeType']   = easeType,
-                ['easeType2']  = easeType,
-                ['useEndNode'] = false
-            }
-            table.sort(l.judgeLineMoveEvents, function(a, b) return a.startTime < b.startTime end)
-        elseif animationType == 3 or animationType == "rotate" then
-            l.judgeLineRotateEvents[#l.judgeLineRotateEvents+1] = {
-                ['startTime']  = startTime,
-                ['endTime']    = 0,
-                ['start']      = startValue,
-                ['end']        = 0,
-                ['start2']     = 0,
-                ['end2']       = 0,
-                ['easeType']   = easeType,
-                ['easeType2']  = 0,
-                ['useEndNode'] = false
-            }
-            table.sort(l.judgeLineRotateEvents, function(a, b) return a.startTime < b.startTime end)
-        end
-    else
-    
+    assert(chart.data.judgeLineList[lineId] and chart.data.judgeLineList[lineId].vanity, "Line does not exist or is not a vanity line")
+    if type(easeType) == "string" then
+        easeType = easing[easeType] or easeType
     end
-
+    assert(type(easeType) == "number", "Undefined ease type "..easeType)
+    local l = chart.data.judgeLineList[lineId]
+    if animationType == 1 or animationType == "alpha" then
+        for j = 1, #l.judgeLineDisappearEvents do
+            if l.judgeLineDisappearEvents[j]['startTime'] == startTime then
+                error("Cannot add animation because nodes overlap")
+            end
+        end
+        l.judgeLineDisappearEvents[#l.judgeLineDisappearEvents+1] = {
+            ['startTime']  = startTime,
+            ['endTime']    = 0,
+            ['start']      = startValue,
+            ['end']        = 0,
+            ['start2']     = 0,
+            ['end2']       = 0,
+            ['easeType']   = easeType,
+            ['easeType2']  = 0,
+            ['useEndNode'] = false
+        }
+        table.sort(l.judgeLineDisappearEvents, function(a, b) return a.startTime < b.startTime end)
+    elseif animationType == 2 or animationType == "move" then
+        for j = 1, #l.judgeLineMoveEvents do
+            if l.judgeLineMoveEvents[j]['startTime'] == startTime then
+                error("Cannot add animation because nodes overlap")
+            end
+        end
+        l.judgeLineMoveEvents[#l.judgeLineMoveEvents+1] = {
+            ['startTime']  = startTime,
+            ['endTime']    = 0,
+            ['start']      = startValue[1],
+            ['end']        = 0.5,
+            ['start2']     = startValue[2],
+            ['end2']       = 0.5,
+            ['easeType']   = easeType,
+            ['easeType2']  = easeType,
+            ['useEndNode'] = false
+        }
+        table.sort(l.judgeLineMoveEvents, function(a, b) return a.startTime < b.startTime end)
+    elseif animationType == 3 or animationType == "rotate" then
+        for j = 1, #l.judgeLineRotateEvents do
+            if l.judgeLineRotateEvents[j]['startTime'] == startTime then
+                error("Cannot add animation because nodes overlap")
+            end
+        end
+        l.judgeLineRotateEvents[#l.judgeLineRotateEvents+1] = {
+            ['startTime']  = startTime,
+            ['endTime']    = 0,
+            ['start']      = startValue,
+            ['end']        = 0,
+            ['start2']     = 0,
+            ['end2']       = 0,
+            ['easeType']   = easeType,
+            ['easeType2']  = 0,
+            ['useEndNode'] = false
+        }
+        table.sort(l.judgeLineRotateEvents, function(a, b) return a.startTime < b.startTime end)
+    end
 end
 
+-- Documented
 function Animation.functions.autoMarkVanity(chart)
     for i = 1, #chart.data.judgeLineList do
         local thisLine = chart.data.judgeLineList[i]
@@ -89,17 +108,25 @@ function Animation.functions.autoMarkVanity(chart)
     end
 end
 
-function Animation.functions.isVanityLine(chart, lineId)
-    if chart.data.judgeLineList[lineId] and #chart.data.judgeLineList[lineId].numOfNotes == 0 then
-        return true
-    else
-        return false
+-- Documented
+function Animation.functions.markVanity(chart, lineId)
+    if chart.data.judgeLineList[lineId] then
+        if chart.data.judgeLineList[lineId]['vanity'] then
+            print("This line is already a vanity line")
+        else
+            print("Marked line ".. lineId .. " as vanity line")
+        end
     end
 end
 
+-- Documented
 function Animation.functions.addAnim(chart, lineId, animationType, startTime, endTime, startValue, endValue, easeType, resetDelay, resetSwitch)
     if chart.data.judgeLineList[lineId] and chart.data.judgeLineList[lineId].vanity then
         local l = chart.data.judgeLineList[lineId]
+        if type(easeType) == "string" then
+            easeType = easing[easeType] or easeType
+        end
+        assert(type(easeType) == "number", "Undefined ease type "..easeType)
         if animationType == 1 or animationType == "alpha" then
             -- Check if the whole place is empty
             local tmin = math.max(0, startTime - (resetDelay or 0))
@@ -303,15 +330,16 @@ function Animation.functions.addAnim(chart, lineId, animationType, startTime, en
     end
 end
 
-function Animation.functions.autoAddAnim(chart, animationType, startTime, endTime, startValue, endValue, easeType, resetDelay)
+-- Documented
+function Animation.functions.autoAddAnim(chart, animationType, startTime, endTime, startValue, endValue, easeType, resetDelay, resetSwitch)
     for i = 1, #chart.data.judgeLineList do
         if chart.data.judgeLineList[i]['vanity'] then
             local isSuccess = pcall(function()
-                Animation.functions.addAnim(chart, i, animationType, startTime, endTime, startValue, endValue, easeType, resetDelay)
+                Animation.functions.addAnim(chart, i, animationType, startTime, endTime, startValue, endValue, easeType, resetDelay, resetSwitch)
             end)
             if isSuccess then
                 print("Animation added on line "..i)
-                return
+                return i
             else
                 -- print(string.format("Attempted to add animation on line %d but failed. Retrying...", i))
             end
@@ -320,11 +348,11 @@ function Animation.functions.autoAddAnim(chart, animationType, startTime, endTim
     print(string.format("All attempts failed, creating new vanity line"))
     Animation.functions.addVanityLine(chart, chart.data.judgeLineList[1]['bpm'])
     local isSuccess = pcall(function()
-        Animation.functions.addAnim(chart, #chart.data.judgeLineList, animationType, startTime, endTime, startValue, endValue, easeType, resetDelay)
+        Animation.functions.addAnim(chart, #chart.data.judgeLineList, animationType, startTime, endTime, startValue, endValue, easeType, resetDelay, resetSwitch)
     end)
     if isSuccess then
-        print("Animation added on a new line")
-        return
+        print("Animation added on the new line")
+        return #chart.data.judgeLineList
     else
         error("Failed to add animation, please check your syntax")
     end
