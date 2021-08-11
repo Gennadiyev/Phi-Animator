@@ -86,7 +86,7 @@ function GlitchFlash.functions.flashOnce(chart, lineId, startTime, endTime, alph
         return animation.functions.nodeExist(chart, lineId, 1, startTime, endTime)
     end)
     if not(isLineExist) then
-        error("The line does not exist")
+        error("Error: "..hasNode)
     end
     if hasNode then
         error("Cannot add animation because other nodes exist")
